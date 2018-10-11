@@ -8,19 +8,23 @@ fetch('https://randomuser.me/api/?results=10')// max 10 resultaten bij de fetch
 	.then(function(data){
 		function create(){
 			for(let i=0; i<10; i++){ // for loop voor 10 resultaten te krijgen
-			let person = data.results[i];
-			let collection = { // personen interpreteren als objecten 
-				name: person.name.first + ' ' + person.name.last,
-				picture: person.picture.large,
-				location: person.location.street + '<br> ' + person.location.city,
-				age: person.dob.age
+				let person = data.results[i];
+			if(like_array.includes(person.login.uuid) || dislike_array.includes(person.login.uuid)){
+				person.shift();
+			}else{
+				let collection = { // personen interpreteren als objecten 
+					name: person.name.first + ' ' + person.name.last,
+					picture: person.picture.large,
+					location: person.location.street + '<br> ' + person.location.city,
+					age: person.dob.age,
+					id: person.login.uuid
+				}
+				person_array.push(collection); // personen toevoegen aan de lege array person_array
 			}
-			person_array.push(collection); // personen toevoegen aan de lege array person_array
 		}
 	localStorage.setItem("persons",JSON.stringify(person_array));
 	}
 	create();// roep de create functie op
-
 		function showPeople(){ // maak de functie showPeople om de opmaak van het tinder profiel te maken
 			let box = document.querySelector('#container__tinderBox');
 			let div = document.createElement('div'); // maak een div element aan
@@ -44,12 +48,10 @@ fetch('https://randomuser.me/api/?results=10')// max 10 resultaten bij de fetch
 			box.appendChild(div);
 		}
 		showPeople(); // roep de functie showpeople
-		
 		function fetchLocal(){
 			if(person_array.length==1){
 				fetch('https://randomuser.me/api/?results=10')// max 10 resultaten bij de fetch
 				create();
-			}else{
 			}
 			if(localStorage.getItem("persons") == null){
 				fetch('https://randomuser.me/api/?results=10')// max 10 resultaten bij de fetch
